@@ -186,15 +186,6 @@ fn add_cert_to_keychain(pem_file_path: String) -> Result<(), String> {
 
 #[tauri::command(rename_all = "snake_case")]
 fn remove_cert_from_keychain(name: String) -> Result<(), String> {
-    // Get the user's home directory
-    let home_dir = env::var_os("HOME").ok_or_else(|| "Home directory not found.".to_string())?;
-    let home_dir_str = home_dir
-        .to_str()
-        .ok_or_else(|| "Failed to convert home directory to string.".to_string())?;
-
-    // Create the full path to the keychain file
-    let keychain_path = format!("{}/Library/Keychains/login.keychain-db", home_dir_str);
-
     // First find the exact certificate hash
     let find_command = format!(
         "security find-certificate -c '{}' -Z | grep SHA-1 | awk '{{print $NF}}'",
