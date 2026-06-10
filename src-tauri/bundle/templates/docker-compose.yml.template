@@ -1,5 +1,4 @@
 # auto generated docker-compose.yml 
-version: '3'
 name: "devophiuchidesktop"
 services:
   nginx:

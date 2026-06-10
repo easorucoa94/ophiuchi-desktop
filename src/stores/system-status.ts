@@ -85,9 +85,18 @@ const systemStatusStore = create<SystemStatusStore>((set, get) => ({
         };
       }
 
-      // Parse the JSON output
-      const containers = JSON.parse(result.stdout);
-      // console.log(containers);
+      // Parse the JSON output (Handle both array and NDJSON format)
+      const stdout = result.stdout.trim();
+      let containers: any[] = [];
+      if (stdout) {
+        if (stdout.startsWith("[")) {
+          containers = JSON.parse(stdout);
+        } else {
+          // Filter out warning lines emitted by docker compose
+          const validLines = stdout.split("\n").filter(line => line.trim().startsWith("{"));
+          containers = validLines.map((line) => JSON.parse(line));
+        }
+      }
       // Check if any container is running
       // Docker compose ps returns an array of containers with their states
       const runningContainers = containers.filter(
